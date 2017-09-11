@@ -1,0 +1,8 @@
+from incidents.algo.initialization import Initialize
+ini = Initialize()
+from incidents.algo.predictions import Learner
+lnr = Learner()
+df_in = ini.load_input("sample.csv")
+df_clean = ini.generate_clean_dataframe(df_in, list(df_in.columns))
+lnr.activate_classifier()
+dd , riter = lnr.process_single_incident(df_clean, True
