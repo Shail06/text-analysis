@@ -1,0 +1,40 @@
+<form class="form-group" action="{% url 'index' %}" method="post">
+				{% csrf_token %}
+					{% if all_columns %}
+						<p>
+							<span>Incident ID: </span>
+							<select class="form-control" name="incident_id">
+							{% for col_name in all_columns %}
+								{% ifequal col_name inc_id %}
+
+									<option id="column{{ forloop.counter }}" selected="selected">{{ col_name }}</option>
+								{% else %}
+									<option id="column{{ forloop.counter }}">{{ col_name }}</option>
+								{% endifequal %}
+							{% endfor %}
+							</select>
+						</p>
+						<p>
+							<span>Description: </span>
+							<select class="form-control" name="description" multiple>
+							{% for col_name in all_columns %}
+								{% if col_name in desc %}
+									<option id="column{{ forloop.counter }}" selected="selected">{{ col_name }}</option>
+								{% else %}
+									<option id="column{{ forloop.counter }}">{{ col_name }}</option>
+								{% endif %}
+							{% endfor %}
+							</select>
+						</p>
+						<p>
+						<span>Perform Action:</span>
+						<select class="form-control">
+							<option value="single">Classify single incident</option>
+							<option value="multipe">Classify whole document</option>
+						</select>
+						</p>
+						<p>
+						<input class="btn btn-success" type="submit" value="Start" name="start">
+						</p>
+					{% endif %}
+				</form>
