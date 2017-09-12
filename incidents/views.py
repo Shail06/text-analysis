@@ -1,18 +1,38 @@
+import os
 from django.http import HttpResponse
 from django.shortcuts import render
-from .forms import UploadFileForm
+from .forms import DocumentUploadForm
+from .models import Document
+from incidents.algo.initialization import Initialize
 
 def index(request):
-	message_home   = "Incident Analysis"
-	context        = {'home_title': message_home}
-	if request.method == 'POST':
-		form = UploadFileForm(request.POST, request.FILES)
-		if form.is_valid():
-			handle_uploaded_file(request.FILES['file'])
-			return HttpResponseRedirect('/training/')
+	home_title       = "Incident Analysis"
+	message_upload   = "uploaded successfully!"
+	context        	 = {'home_title': home_title}
+	ini_object		 = Initialize()
+
+	if(request.method == 'POST'):
+		if ('upload' in request.POST):
+			form = DocumentUploadForm(request.POST, request.FILES)
+			if(form.is_valid()):
+				newdoc		= Document(docfile=request.FILES['docfile'])
+				newdoc.save()
+				filename	= request.FILES['docfile'].name
+				context['upload_success'] = filename + ' ' + message_upload
+				df_input 	= ini_object.load_input('uploads/'+filename)
+				df_cols  	= list(df_input.columns)
+				context['all_columns'] = df_cols
+		elif('start' in request.POST):
+			pass
+
 	else:
-		form = UploadFileForm()
+		form = DocumentUploadForm()
 	return render(request, 'incidents/index.html', context)
+
+
+
+
+
 
 
 def training(request):

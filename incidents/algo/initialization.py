@@ -7,7 +7,7 @@ class Initialize:
 
 	# Get all the columns names to show on webpage for user to select
 	def load_input(self, filename):
-		df_input_raw = pd.read_csv('input/'+filename,  sep = ',', encoding = 'ISO-8859-1')
+		df_input_raw = pd.read_csv(filename,  sep = ',', encoding = 'ISO-8859-1')
 		return df_input_raw
 
 	# From the column names selected by user, generate a clean input Data frame
