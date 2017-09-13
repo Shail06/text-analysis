@@ -14,14 +14,38 @@
 				
 	</div>
 
-	<div class="col-lg-6">
-				{% if inc_id %}
-					<p>{{ inc_id }}</p>
+	<div class="col-lg-6" id="single_incident">
+				{% if incident_description_text %}
+					<p><b>Incident ID: </b>{{ incident_id }}<br /></p>
+					<p><b>Description: </b><br/>{{ incident_description_text }}</p>
 				{% endif %}
-				{% if desc %}	
-					<p>{{ desc }}</p>
+				{% if incident_summary %}	
+					<p><b>Summary: </b><br/>{{ incident_summary }}</p>
 				{% endif %}
+				{% if predicted_list %}
+				<p><b>Summary: </b></p>
+				<table width="100%">
+					{% for label, prob in predicted_list %}	
+					
+						<tr>
+							<td>
+								{{ label }}
+							</td>
+							<td>
+								{{ prob }}
+							</td>
+							<td>
+								<input type="button" name="accept" value="Accept"  id=label_"{{ forloop.counter }}" />
+							</td>
+						</tr>
+					
+					{% endfor %}
+				</table>
+				<p><input type="button" name="stop" value="Stop" class="btn btn-danger"></p>
+				{% endif %}
+
 	</div>
+
 </div>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>

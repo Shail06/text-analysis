@@ -71,18 +71,18 @@ class Learner:
             sorted_pred_list = sorted(entry, key=lambda t: t[1], reverse=True)
         return sorted_pred_list
 
-    def process_single_incident(self, df_input_clean, next_incident):
+    def process_single_incident(self, df_input_clean, incid_col):
         rows_iterator = df_input_clean.iterrows()
-        if(next_incident == True):
-            data_display, row_iter = self.fetch_next_row(rows_iterator)
-            return data_display, row_iter
+        data_display, row_iter = self.fetch_next_row(rows_iterator, incid_col)
+        return data_display, row_iter
 
-    def fetch_next_row(self, rows_iterator):
+    def fetch_next_row(self, rows_iterator, incid_col):
         next_row = next(rows_iterator)
+        incid_column = next_row[1][incid_col]
         description = next_row[1]['combined_desc']
         summary = next_row[1]['summary']
         pred_prob_list = self.get_predictions_probs(summary)
-        return [description, summary, pred_prob_list], rows_iterator
+        return [incid_column ,description, summary, pred_prob_list], rows_iterator
 
     def enhance_knowledge(self, summary_text, pred_label):
         know_object = knowledge(summary=summary_text, label=pred_label)

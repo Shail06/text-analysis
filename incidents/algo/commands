@@ -5,4 +5,4 @@ lnr = Learner()
 df_in = ini.load_input("sample.csv")
 df_clean = ini.generate_clean_dataframe(df_in, list(df_in.columns))
 lnr.activate_classifier()
-dd , riter = lnr.process_single_incident(df_clean, True
+dd , riter = lnr.process_single_incident(df_clean, True)

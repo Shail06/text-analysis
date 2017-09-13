@@ -3,7 +3,10 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from .forms import DocumentUploadForm
 from .models import Document
+from incidents.algo.execution import ExecuteScenario
 from incidents.algo.initialization import Initialize
+from incidents.algo.predictions import Learner
+
 
 from django.core.files.storage import FileSystemStorage
 import time
@@ -13,10 +16,13 @@ def index(request):
     home_title = "Incident Analysis"
     message_upload = "uploaded successfully!"
     context = {'home_title': home_title}
-    ini_object = Initialize()
+    exec_scenario = ExecuteScenario()  # Object reinitilizes
+    ini = Initialize()
+    lnr = Learner()
 
     # import pdb;
     # pdb.set_trace();
+
     if(request.method == 'POST'):
         if ('upload' in request.POST):
             form = DocumentUploadForm(request.POST, request.FILES)
@@ -33,31 +39,31 @@ def index(request):
                     request.session["prev_files"] = []
 
                 if len(request.session["prev_files"]) > 0:
-                	try:
-                		os.remove(request.session["prev_files"][0])
-                	except IOError:
-                		pass
+                    try:
+                        os.remove(request.session["prev_files"][0])
+                    except IOError:
+                        pass
 
-                	request.session["prev_files"] = []
+                    request.session["prev_files"] = []
 
                 if filename:
                     request.session["prev_files"].append(filename)
 
-                # uploaded_file	= request.FILES['docfile'].name
                 context['upload_success'] = upFile.name + ' ' + message_upload
-                df_input = ini_object.load_input('uploads/' + upFilename)
-                df_cols = list(df_input.columns)
+                df_cols = exec_scenario.get_column_headers(filename)
                 context['all_columns'] = df_cols
                 request.session['all_columns'] = df_cols
 
         elif('start' in request.POST):
-            incident_id = request.POST['incident_id']
-            descriptions = request.POST.getlist('description')
+            incid_col = request.POST['incident_id']
+            desc_col = request.POST.getlist('description')
             context['all_columns'] = request.session['all_columns']
-            # Values in incident_id and decriptions should be string, and list
-            # respectively
-            context['inc_id'] = incident_id
-            context['desc'] = descriptions
+            df_cols = exec_scenario.get_column_headers(request.session["prev_files"][0])
+            data_display, row_iter = exec_scenario.get_first_incident(incid_col, desc_col)
+            context["incident_id"] = data_display[0]
+            context["incident_description_text"] = data_display[1]
+            context["incident_summary"] = data_display[2]
+            context["predicted_list"] = data_display[3]
 
     else:
         form = DocumentUploadForm()
