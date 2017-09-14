@@ -1,4 +1,4 @@
-<form class="form-group" action="{% url 'index' %}" method="post">
+<form class="form-group" action="{% url 'index' %}" method="POST">
 				{% csrf_token %}
 					{% if all_columns %}
 						<p>
@@ -16,9 +16,9 @@
 						</p>
 						<p>
 							<span>Description: </span>
-							<select class="form-control" name="description" multiple>
+							<select class="form-control" name="description" required="" multiple>
 							{% for col_name in all_columns %}
-								{% if col_name in desc %}
+								{% if col_name in desc_cols %}
 									<option id="column{{ forloop.counter }}" selected="selected">{{ col_name }}</option>
 								{% else %}
 									<option id="column{{ forloop.counter }}">{{ col_name }}</option>

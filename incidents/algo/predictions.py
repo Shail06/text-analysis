@@ -7,7 +7,7 @@ from incidents.models import knowledge
 from .initialization import Initialize
 
 import nltk
-
+import json
 
 class Learner:
     classifier = None
@@ -50,7 +50,7 @@ class Learner:
         dtm_input = vect.transform(df_input_clean['summary'])
         predictions = nb_clf.predict(dtm_input)
         df_output = df_input_clean
-        df_output['Predicted'] = predictions
+        df_output['Predicted Label'] = predictions
         return df_output
 
     def save_output(self, df_output, filename, id_col):
@@ -71,6 +71,24 @@ class Learner:
             sorted_pred_list = sorted(entry, key=lambda t: t[1], reverse=True)
         return sorted_pred_list
 
+    
+    def get_predictions_probs_all(self, df_input_clean):
+        nb_clf = self.classifier
+        vect = self.vectorizer
+        doc = list(df_input_clean['summary'])
+        doc_tf = vect.transform(doc)
+        predicted_probs = nb_clf.predict_proba(doc_tf)
+        all_tags = nb_clf.classes_.tolist()
+        tags_probs = [zip(all_tags, i) for i in predicted_probs]
+        prediction_list = []
+        for entry in tags_probs:
+            sorted_pred_list = sorted(entry, key=lambda t: t[1], reverse=True)
+            prediction_list.append(json.dumps(sorted_pred_list))
+
+        df_input_clean['Predictions Detail'] = prediction_list
+
+        return df_input_clean
+
     def process_single_incident(self, df_input_clean, incid_col):
         rows_iterator = df_input_clean.iterrows()
         data_display, row_iter = self.fetch_next_row(rows_iterator, incid_col)
@@ -82,7 +100,7 @@ class Learner:
         description = next_row[1]['combined_desc']
         summary = next_row[1]['summary']
         pred_prob_list = self.get_predictions_probs(summary)
-        return [incid_column ,description, summary, pred_prob_list], rows_iterator
+        return [incid_column, description, summary, pred_prob_list], rows_iterator
 
     def enhance_knowledge(self, summary_text, pred_label):
         know_object = knowledge(summary=summary_text, label=pred_label)

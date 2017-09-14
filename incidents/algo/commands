@@ -6,3 +6,25 @@ df_in = ini.load_input("sample.csv")
 df_clean = ini.generate_clean_dataframe(df_in, list(df_in.columns))
 lnr.activate_classifier()
 dd , riter = lnr.process_single_incident(df_clean, True)
+
+
+
+
+
+################### Single Incidents Pagination #####################
+
+
+from incidents.algo.execution import ExecuteScenario
+exe 	= ExecuteScenario()
+cols 	= exe.get_column_headers('uploads/sample20170913-165416.csv')
+df_output    = exe.get_predicted_dataframe(cols[1:])
+
+
+
+dd,r = exe.get_first_incident(cols[0], cols[1:])
+from incidents.models import Uploaded_Data
+updata = Uploaded_Data()
+updata.incident_id = dd[0]
+updata.description = dd[1]
+updata.summary = dd[2]
+updata.set_predictions(dd[3])

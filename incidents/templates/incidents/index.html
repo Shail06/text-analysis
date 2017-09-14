@@ -15,36 +15,49 @@
 	</div>
 
 	<div class="col-lg-6" id="single_incident">
-				{% if incident_description_text %}
-					<p><b>Incident ID: </b>{{ incident_id }}<br /></p>
-					<p><b>Description: </b><br/>{{ incident_description_text }}</p>
-				{% endif %}
-				{% if incident_summary %}	
-					<p><b>Summary: </b><br/>{{ incident_summary }}</p>
-				{% endif %}
-				{% if predicted_list %}
-				<p><b>Summary: </b></p>
-				<table width="100%">
-					{% for label, prob in predicted_list %}	
-					
-						<tr>
-							<td>
-								{{ label }}
-							</td>
-							<td>
-								{{ prob }}
-							</td>
-							<td>
-								<input type="button" name="accept" value="Accept"  id=label_"{{ forloop.counter }}" />
-							</td>
-						</tr>
-					
-					{% endfor %}
-				</table>
-				<p><input type="button" name="stop" value="Stop" class="btn btn-danger"></p>
-				{% endif %}
+				{% if output_detail %}
+					<p><b>Incident ID: </b>{{ output_detail.0.0 }}<br /></p>
+					<p><b>Description: </b><br/>{{ output_detail.0.1 }}<br />{{ output_detail.0.2}}</p>
+					<p><b>Summary: </b><br/>{{ output_detail.0.4 }}</p>
+					<p><b>Predictions: </b></p>
+						<table width="100%">
+							{% for label, prob in predictions %}	
+							
+								<tr>
+									<td>
+										{{ label }}
+									</td>
+									<td>
+										{{ prob }}
+									</td>
+									<td>
+										<input type="button" name="accept" value="Accept"  id=label_"{{ forloop.counter }}" />
+									</td>
+								</tr>
+							
+							{% endfor %}
+						</table>
+					<p><input type="button" name="stop" value="Stop" class="btn btn-danger"></p>
+				
+					<div class="pagination">
+					    <span class="step-links">
+					        {% if output_detail.has_previous %}
+					            <a href="?page={{ output_detail.previous_page_number }}">previous</a>
+					        {% endif %}
 
+					        <span class="current">
+					            Page {{ output_detail.number }} of {{ output_detail.paginator.num_pages }}.
+					        </span>
+
+					        {% if output_detail.has_next %}
+					            <a href="?page={{ output_detail.next_page_number }}">next</a>
+					        {% endif %}
+					    </span>
+					</div>
+				{% endif %}
 	</div>
+
+
 
 </div>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
