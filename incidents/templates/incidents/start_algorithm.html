@@ -5,7 +5,7 @@
 							<span>Incident ID: </span>
 							<select class="form-control" name="incident_id">
 							{% for col_name in all_columns %}
-								{% ifequal col_name inc_id %}
+								{% ifequal col_name incid_col %}
 
 									<option id="column{{ forloop.counter }}" selected="selected">{{ col_name }}</option>
 								{% else %}
@@ -28,9 +28,14 @@
 						</p>
 						<p>
 						<span>Perform Action:</span>
-						<select class="form-control">
-							<option value="single">Classify single incident</option>
-							<option value="multipe">Classify whole document</option>
+						<select class="form-control" name="perform_action">
+							{% if perform_action == "single" %}	
+							<option value="multiple"  >Classify whole document</option>
+							<option value="single" selected="selected">Classify single incident</option>
+							{% else %}							
+							<option value="multiple" selected="selected" >Classify whole document</option>
+							<option value="single"  >Classify single incident</option>
+							{% endif %}
 						</select>
 						</p>
 						<p>

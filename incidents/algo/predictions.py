@@ -8,6 +8,8 @@ from .initialization import Initialize
 
 import nltk
 import json
+from pandas import ExcelWriter
+
 
 class Learner:
     classifier = None
@@ -53,9 +55,10 @@ class Learner:
         df_output['Predicted Label'] = predictions
         return df_output
 
-    def save_output(self, df_output, filename, id_col):
-        cols = [id_col, 'Predicted']
-        df_output.to_csv('output/' + filename, encoding='utf-8', columns=cols)
+    def save_output(self, df_output, filename):
+        writer = pd.ExcelWriter('output/' + filename,  engine='xlsxwriter')
+        df_output.to_excel(writer, 'Sheet1')
+        writer.save()
 
     # Process individual Incident for Training the Classifier
 
@@ -71,13 +74,21 @@ class Learner:
             sorted_pred_list = sorted(entry, key=lambda t: t[1], reverse=True)
         return sorted_pred_list
 
-    
+    def get_prediction_stats(self, df_output, incident_id):
+        all_stats = df_output.groupby('Predicted Label').count()
+        count_stats = all_stats[incident_id]
+        return count_stats
+
     def get_predictions_probs_all(self, df_input_clean):
         nb_clf = self.classifier
         vect = self.vectorizer
         doc = list(df_input_clean['summary'])
         doc_tf = vect.transform(doc)
+        predictions = nb_clf.predict(doc_tf)
+        df_input_clean['Predicted Label'] = predictions
         predicted_probs = nb_clf.predict_proba(doc_tf)
+        predicted_probs = [[round(float(i) * 100, 4) for i in nested_list]
+                           for nested_list in predicted_probs]
         all_tags = nb_clf.classes_.tolist()
         tags_probs = [zip(all_tags, i) for i in predicted_probs]
         prediction_list = []

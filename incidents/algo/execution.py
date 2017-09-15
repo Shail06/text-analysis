@@ -27,6 +27,19 @@ class ExecuteScenario():
         output_df = self.learner.get_predictions_probs_all(self.df_clean)
         return output_df
 
+    def get_prediction_statistics(self, df_output, incid_col):
+        c_stats = self.learner.get_prediction_stats(df_output, incid_col)
+        stat_list = []
+        for index, value in c_stats.items():
+            stat_list.append([index, value])
+        return c_stats, stat_list
+
+    def save_to_knowledge(self,summary, label):
+            self.learner.enhance_knowledge(summary, label)
+
+    def save_output(self, df_output, filename):
+        self.learner.save_output(df_output, filename)
+
     def get_first_incident(self, incid_col, desc_col):
         self.df_clean = self.initilize.generate_clean_dataframe(
             self.df_input, desc_col)

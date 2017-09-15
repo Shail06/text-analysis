@@ -1,11 +1,6 @@
 <form class="form-group" action="{% url 'index' %}" enctype="multipart/form-data" method="post">
 				{% csrf_token %}
-			     	<p>{{ form.non_field_errors }}</p>
-		            <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
-		            <p>
-		                {{ form.docfile.errors }}
-		                {{ form.docfile }}
-		            </p>
+			   
 					<p>Incident File: <input class="form-control-file" id='id_docfile' name="docfile" required="" type="file" /></p>
 					<p>
 						<input class="btn btn-primary" type="submit"  value="Upload" name="upload">
