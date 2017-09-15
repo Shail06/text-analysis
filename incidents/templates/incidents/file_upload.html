@@ -1,7 +1,7 @@
 <form class="form-group" action="{% url 'index' %}" enctype="multipart/form-data" method="post">
 				{% csrf_token %}
 			   
-					<p>Incident File: <input class="form-control-file" id='id_docfile' name="docfile" required="" type="file" /></p>
+					<p>Incident File: <input class="form-control-file" id='id_docfile' name="docfile" required="" type="file" accept=".xls,.xlsx"/></p>
 					<p>
 						<input class="btn btn-primary" type="submit"  value="Upload" name="upload">
 						{% if upload_success %}

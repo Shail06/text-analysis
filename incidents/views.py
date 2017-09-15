@@ -29,6 +29,7 @@ def index(request):
                 upFile = request.FILES['docfile']
                 name, extension = os.path.splitext(upFile.name)
                 upFilename = name + time.strftime("%Y%m%d-%H%M%S") + extension
+                request.session["file_name"] = upFilename
                 fs = FileSystemStorage()
                 filename = fs.save('uploads/' + upFilename, upFile)
 
@@ -70,7 +71,11 @@ def index(request):
                 request.session["prev_files"][0])
             # import pdb;
             # pdb.set_trace()
-            df_output = exec_scenario.get_predicted_dataframe(desc_col)
+            temp_file = "output/temp/" + request.session["file_name"]
+            if(os.path.isfile(temp_file)):
+                df_output = exec_scenario.get_input_dataframe(temp_file)
+            else:
+                df_output = exec_scenario.get_predicted_dataframe(desc_col)
 
             df_output_single = df_output[
                 [incid_col, 'combined_desc', 'summary', 'Predictions Detail']]
@@ -93,9 +98,9 @@ def index(request):
             context["LABEL_COUNTS"] = c_stats.values.tolist()
             df_output_multiple = df_output.drop(
                 ['combined_desc', 'summary', 'Predictions Detail'], axis=1)
-            name, extension = os.path.splitext(
-                request.session["prev_files"][0])
-            op_name = name + '.xlsx'
+
+            op_name = request.session["file_name"]
+            exec_scenario.save_output(df_output, 'temp/' + op_name)
             exec_scenario.save_output(df_output_multiple, op_name)
 
         elif('accept' in request.POST):
@@ -108,7 +113,7 @@ def index(request):
             desc_col = context['desc_cols']
             incid_col = request.session['incid_col']
             df_cols = exec_scenario.get_column_headers(request.session["prev_files"][
-                                                       0])  # Necessary step for next step
+                0])  # Necessary step for next step
             df_output = exec_scenario.get_predicted_dataframe(desc_col)
             df_output_single = df_output[
                 [incid_col, 'combined_desc', 'summary', 'Predictions Detail']]
@@ -125,7 +130,7 @@ def index(request):
 
             summary_text = request.POST.get('incident_summary')
             predicted_label = request.POST.get('predicted_label')
-            ##################exec_scenario.save_to_knowledge(summary_text, predicted_label)
+            # exec_scenario.save_to_knowledge(summary_text, predicted_label)
 
     elif('page' in request.GET):
         context['upload_success'] = request.session['upload_success']
@@ -138,7 +143,9 @@ def index(request):
         incid_col = request.session['incid_col']
         df_cols = exec_scenario.get_column_headers(request.session["prev_files"][
                                                    0])  # Necessary step for next step
-        df_output = exec_scenario.get_predicted_dataframe(desc_col)
+        file_name = request.session["file_name"]
+        df_output = exec_scenario.get_input_dataframe(
+            "output/temp/" + file_name)
         df_output_single = df_output[
             [incid_col, 'combined_desc', 'summary', 'Predictions Detail']]
 

@@ -12,6 +12,10 @@ class ExecuteScenario():
         self.df_cols = None
         self.df_clean = None
 
+    def get_input_dataframe(self, filename):
+        self.df_input = self.initilize.load_input(filename)
+        return self.df_input
+
     def get_column_headers(self, filename):
         ini_object = self.initilize
         self.df_input = ini_object.load_input(filename)
@@ -34,8 +38,8 @@ class ExecuteScenario():
             stat_list.append([index, value])
         return c_stats, stat_list
 
-    def save_to_knowledge(self,summary, label):
-            self.learner.enhance_knowledge(summary, label)
+    def save_to_knowledge(self, summary, label):
+        self.learner.enhance_knowledge(summary, label)
 
     def save_output(self, df_output, filename):
         self.learner.save_output(df_output, filename)
