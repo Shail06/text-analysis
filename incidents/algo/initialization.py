@@ -17,7 +17,7 @@ class Initialize:
     def generate_clean_dataframe(self, df_input_raw, desc_cols):
         df_clean_input = df_input_raw
         df_input_raw['combined_desc'] = df_input_raw[desc_cols].apply(
-            lambda x: ' '.join(x.astype(str)), axis=1)
+            lambda x: ' \n '.join(x.astype(str)), axis=1)
         generate_summary = lambda incident_row: cleaning.get_clean_text(incident_row[
                                                                         'combined_desc'])
         df_clean_input['summary'] = df_input_raw.apply(

@@ -3,15 +3,18 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.0/Chart.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.0/Chart.bundle.min.js"></script>
+	<script
+			src="https://code.jquery.com/jquery-3.2.1.min.js"
+			integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+	crossorigin="anonymous"></script>
 </head>
 <body class="container">
-<div class="container">
-  <div class="page-header">
-    <h1>{{ home_title }}</h1>
-    <hr>
-  </div>
- </div>
-
+	<div class="container">
+		<div class="page-header">
+			<h1>{{ home_title }}</h1>
+			<hr>
+		</div>
+	</div>
 	{% load get_type %}
 	<div class="row">
 		<div class="col-lg-6">
@@ -22,7 +25,7 @@
 		
 		{% if perform_action == "single"  %}
 			{% include "incidents/training.html" %}
-		{% elif perform_action == "multiple" %}
+			{% elif perform_action == "multiple" %}
 			{% include "incidents/chart.html" %}
 		{% endif %}
 		

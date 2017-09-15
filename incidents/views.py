@@ -100,6 +100,7 @@ def index(request):
                 ['combined_desc', 'summary', 'Predictions Detail'], axis=1)
 
             op_name = request.session["file_name"]
+            #df_output['combined_desc'] = df_output.combined_desc.str.replace(r'\n', ' <br/> ')
             exec_scenario.save_output(df_output, 'temp/' + op_name)
             exec_scenario.save_output(df_output_multiple, op_name)
 
@@ -114,7 +115,9 @@ def index(request):
             incid_col = request.session['incid_col']
             df_cols = exec_scenario.get_column_headers(request.session["prev_files"][
                 0])  # Necessary step for next step
-            df_output = exec_scenario.get_predicted_dataframe(desc_col)
+            file_name = request.session["file_name"]
+            df_output = exec_scenario.get_input_dataframe(
+                "output/temp/" + file_name)
             df_output_single = df_output[
                 [incid_col, 'combined_desc', 'summary', 'Predictions Detail']]
             paginator = Paginator(df_output_single.values.tolist(), 1)
@@ -130,7 +133,7 @@ def index(request):
 
             summary_text = request.POST.get('incident_summary')
             predicted_label = request.POST.get('predicted_label')
-            # exec_scenario.save_to_knowledge(summary_text, predicted_label)
+            exec_scenario.save_to_knowledge(summary_text, predicted_label)
 
     elif('page' in request.GET):
         context['upload_success'] = request.session['upload_success']
@@ -142,7 +145,7 @@ def index(request):
         desc_col = request.session['desc_cols']
         incid_col = request.session['incid_col']
         df_cols = exec_scenario.get_column_headers(request.session["prev_files"][
-                                                   0])  # Necessary step for next step
+            0])  # Necessary step for next step
         file_name = request.session["file_name"]
         df_output = exec_scenario.get_input_dataframe(
             "output/temp/" + file_name)

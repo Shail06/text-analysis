@@ -3,18 +3,25 @@
 				<form class="form-group" action="{% url 'index' %}" method="POST">
 					{% csrf_token %}
 					<p><b>Incident ID: </b><span style=" font-family: 'Courier New', 'sans-serif';">{{ output_detail.0.0 }}</font></p>
-					<p><b>Description: </b><div style="overflow-y: auto; overflow-x: hidden;  font-family: 'Courier New', 'sans-serif'; font-size: 14px; height: 120px; " >{{ output_detail.0.1 }}</div></p>
-					<p><b>Summary: </b><div name="incident_summary" style="overflow-y: auto; overflow-x: hidden;  font-family: 'Courier New', 'sans-serif'; font-size: 14px; height: 90px; "  contenteditable >{{ output_detail.0.2 }}</div></p>
+					<p><b>Description: </b>
+						<div style="overflow-y: auto; overflow-x: hidden;  font-family: 'Courier New', 'sans-serif'; font-size: 14px; height: 150px; padding-left: 5px; padding-top: 5px; background-color: WhiteSmoke; " >
+								{% autoescape on %}
+									{{ output_detail.0.1 | linebreaksbr }}
+								{% endautoescape %}
+						</div>
+					</p>
+					<p><b>Summary: </b><div><textarea id="summary" name="incident_summary" style="overflow-y: auto; overflow-x: hidden;  font-family: 'Courier New', 'sans-serif'; font-size: 14px; height: 80px; resize: none; width: 100%"  contenteditable >{{ output_detail.0.2 }}</textarea></div></p>
 					<p><b>Predictions: </b></p>
 					<table width="100%">
 						{% for label, prob in predictions %}
 							
 							<tr>
-								<td width="50%">
-									<label name="predicted_label">{{ label }}</label>
+								<td width="60%">
+									<label style=" font-family: 'Courier New', 'sans-serif'; font-size:14px" >{{ label }}</label>
+									<input type="hidden" class="{{label}}" name="predicted_label" value="{{ label }}" />
 								</td>
 								<td width="100%">
-									<label name="probability">{{ prob }}%</label>
+									<label name="probability" style=" font-family: 'Courier New', 'sans-serif'; font-size:14px">{{ prob }}%</label>
 								</td>
 								<td>
 									<input class="btn btn-default" type="submit" name="accept" value="Accept"  id=accept_"{{ forloop.counter }}" />
