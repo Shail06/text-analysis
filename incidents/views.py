@@ -12,13 +12,15 @@ import time
 import json
 import pickle
 
+exec_scenario = ExecuteScenario() 
 
 def index(request):
     home_title = "Incident Analysis"
     message_upload = "uploaded successfully!"
     context = {'home_title': home_title}
-    exec_scenario = ExecuteScenario()  # Object reinitilize
 
+
+    print("inside index")
     # import pdb;
     # pdb.set_trace();
 
@@ -131,10 +133,6 @@ def index(request):
             context['output_detail'] = output_detail
             context['predictions'] = json.loads(output_detail[0][-1])
 
-            summary_text = request.POST.get('incident_summary')
-            predicted_label = request.POST.get('predicted_label')
-            exec_scenario.save_to_knowledge(summary_text, predicted_label)
-
     elif('page' in request.GET):
         context['upload_success'] = request.session['upload_success']
         context['all_columns'] = request.session['all_columns']
@@ -164,6 +162,23 @@ def index(request):
         context['predictions'] = json.loads(output_detail[0][-1])
 
     else:
-        form = DocumentUploadForm()
+        print("nothing iff")
+        #form = DocumentUploadForm()
 
     return render(request, 'incidents/index.html', context)
+
+from django.views.generic.base import TemplateView
+
+
+class ajax_view(TemplateView):
+
+    def post(self, request, *args, **kwargs):
+        print("inside ajax view")
+        incident_summary = request.POST.get('incident_summary')
+        predicted_label = request.POST.get('predicted_label')
+        print(incident_summary)
+        print(predicted_label)
+        exec_scenario.save_to_knowledge(incident_summary, predicted_label)
+        #value = Model.objects.filter(id=id)
+        #data = serializers.serialize('json', value, fields=('fieldone'))
+        return HttpResponse({"incident_summary": incident_summary}, content_type='application/json')

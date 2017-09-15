@@ -1,62 +1,105 @@
-			<div class="col-lg-6" id="single_incident">
-				{% if output_detail %}
-				<form class="form-group" action="{% url 'index' %}" method="POST">
-					{% csrf_token %}
-					<p><b>Incident ID: </b><span style=" font-family: 'Courier New', 'sans-serif';">{{ output_detail.0.0 }}</font></p>
-					<p><b>Description: </b>
-						<div style="overflow-y: auto; overflow-x: hidden;  font-family: 'Courier New', 'sans-serif'; font-size: 14px; height: 150px; padding-left: 5px; padding-top: 5px; background-color: WhiteSmoke; " >
-								{% autoescape on %}
-									{{ output_detail.0.1 | linebreaksbr }}
-								{% endautoescape %}
-						</div>
-					</p>
-					<p><b>Summary: </b><div><textarea id="summary" name="incident_summary" style="overflow-y: auto; overflow-x: hidden;  font-family: 'Courier New', 'sans-serif'; font-size: 14px; height: 80px; resize: none; width: 100%"  contenteditable >{{ output_detail.0.2 }}</textarea></div></p>
-					<p><b>Predictions: </b></p>
-					<table width="100%">
-						{% for label, prob in predictions %}
-							
-							<tr>
-								<td width="60%">
-									<label style=" font-family: 'Courier New', 'sans-serif'; font-size:14px" >{{ label }}</label>
-									<input type="hidden" class="{{label}}" name="predicted_label" value="{{ label }}" />
-								</td>
-								<td width="100%">
-									<label name="probability" style=" font-family: 'Courier New', 'sans-serif'; font-size:14px">{{ prob }}%</label>
-								</td>
-								<td>
-									<input class="btn btn-default" type="submit" name="accept" value="Accept"  id=accept_"{{ forloop.counter }}" />
-								</td>
-							</tr>
-							
-						{% endfor %}
-					</table>
-					<span class="step-links">
-						<div>
-							<ul class="pagination justify-content-center">
-								{% if output_detail.has_previous %}
-									<li class="page-item" >
-										<a class="page-link" href="?page={{ output_detail.previous_page_number }}">
-											<!--<span aria-hidden="true"></span>
-							        		<span class="sr-only">Previous</span>-->
-							        		&laquo;&nbsp;Previous
-										</a>
-									</li>
-								{% endif %}
-								<!--<span class="current">-->
-									<li class="page-item active"><a class="page-link" href="#">Page {{ output_detail.number }} of {{ output_detail.paginator.num_pages }} </a></li>
-								<!--</span>-->
-								{% if output_detail.has_next %}
-									<li class="page-item">
-										<a class="page-link" href="?page={{ output_detail.next_page_number }} ">
-											<!--<span aria-hidden="true">&raquo;</span>
-							        		<span class="sr-only">Next</span>-->
-							        		Next&nbsp;&raquo;
-										</a>
-									</li>
-								{% endif %}
-								</ul>
-						</div>
-					</span>
-				</form>
+<div class="col-lg-6" id="single_incident">
+	<script type='text/javascript'>
+		$(function(){
+			
+			console.log( "ready!" );
+
+			$(".accept").click(function( event ) {
+		
+				// Stop form from submitting normally
+				event.preventDefault();
+				var summary = $('#summary').val();
+				var label =  $(this).parent().prev().prev().find("input").val();
+				console.log(summary);
+				console.log(label);
+				$.ajax({
+					    url: "/incidents/ajax/",
+					    type: "POST",
+					    headers: {'X-CSRFToken': '{{ csrf_token }}'},
+					    data: { incident_summary : summary, predicted_label : label },
+					    dataType: 'json',
+					    success: function(data) {
+					      console.log(data);
+					    },
+					    error: function (textStatus, errorThrown) {
+			                console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+			                console.log(textStatus);
+			                console.log(errorThrown);
+			            }
+					  });
+
+				// alert("clicked");
+				// console.log( $(this).val() );
+				// $(this).parent().prev().prev().children().css( "background-color", "red" )
+				// console.log( $(this).parent().prev().prev().find("input").val()); //.prev().find("input").val() );
+				// console.log($('#summary').val())
+				
+				});
+			});
+			
+	</script>
+	{% if output_detail %}
+		<!--<form class="form-group" action="{% url 'index' %}" method="POST">-->
+		{% csrf_token %}
+		<p><b>Incident ID: </b><span style=" font-family: 'Courier New', 'sans-serif';">{{ output_detail.0.0 }}</font></p>
+		<p><b>Description: </b>
+			<div style="overflow-y: auto; overflow-x: hidden;  font-family: 'Courier New', 'sans-serif'; font-size: 14px; height: 150px; padding-left: 5px; padding-top: 5px; background-color: WhiteSmoke; " >
+				{% autoescape on %}
+				{{ output_detail.0.1 | linebreaksbr }}
+			{% endautoescape %}
+		</div>
+	</p>
+	<p><b>Summary: </b><div><textarea id="summary" name="incident_summary" style="overflow-y: auto; overflow-x: hidden;  font-family: 'Courier New', 'sans-serif'; font-size: 14px; height: 80px; resize: none; width: 100%"  contenteditable >{{ output_detail.0.2 }}</textarea></div></p>
+	<p><b>Predictions: </b></p>
+	<form action="/" id="searchForm">
+		<input class="btn btn-default accept" type="submit" name="accept" value="Accept"  id="accept" />
+	</form>
+	<table width="100%">
+		{% for label, prob in predictions %}
+			
+			<tr>
+				<td width="60%">
+					<label style=" font-family: 'Courier New', 'sans-serif'; font-size:14px" >{{ label }}</label>
+					<input type="hidden" class="{{label}}" name="predicted_label" value="{{ label }}" />
+				</td>
+				<td width="100%">
+					<label name="probability" style=" font-family: 'Courier New', 'sans-serif'; font-size:14px">{{ prob }}%</label>
+				</td>
+				<td>
+					<input class="btn btn-default accept" type="submit" name="accept" value="Accept"  id="accept" />
+					<!--<input class="btn btn-default" type="submit" name="accept" value="Accept"  id="accept_{{ forloop.counter }}" />-->
+				</td>
+			</tr>
+			
+		{% endfor %}
+	</table>
+	<span class="step-links">
+		<div>
+			<ul class="pagination justify-content-center">
+				{% if output_detail.has_previous %}
+					<li class="page-item" >
+						<a class="page-link" href="?page={{ output_detail.previous_page_number }}">
+							<!--<span aria-hidden="true"></span>
+							<span class="sr-only">Previous</span>-->
+							&laquo;&nbsp;Previous
+						</a>
+					</li>
 				{% endif %}
-			</div>
+				<!--<span class="current">-->
+				<li class="page-item active"><a class="page-link" href="#">Page {{ output_detail.number }} of {{ output_detail.paginator.num_pages }} </a></li>
+				<!--</span>-->
+				{% if output_detail.has_next %}
+					<li class="page-item">
+						<a class="page-link" href="?page={{ output_detail.next_page_number }} ">
+							<!--<span aria-hidden="true">&raquo;</span>
+							<span class="sr-only">Next</span>-->
+							Next&nbsp;&raquo;
+						</a>
+					</li>
+				{% endif %}
+			</ul>
+		</div>
+	</span>
+	<!--</form>-->
+{% endif %}
+</div>
