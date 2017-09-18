@@ -16,9 +16,13 @@ dd , riter = lnr.process_single_incident(df_clean, True)
 
 from incidents.algo.execution import ExecuteScenario
 exe 	= ExecuteScenario()
-cols 	= exe.get_column_headers('uploads/sample20170913-165416.csv')
+cols 	= exe.get_column_headers('uploads/sample20170914-133821.csv')
 df_output    = exe.get_predicted_dataframe(cols[1:])
+df_output.values.tolist()
 
+
+from django.core.paginator import Paginator
+paginator = Paginator(df_output.values.tolist(), 1)
 
 
 dd,r = exe.get_first_incident(cols[0], cols[1:])
@@ -28,3 +32,30 @@ updata.incident_id = dd[0]
 updata.description = dd[1]
 updata.summary = dd[2]
 updata.set_predictions(dd[3])
+
+
+	class Meta:
+		db_table = 'knowledge_base'
+		managed = False
+
+
+################## Enhance Knowlegde #############
+
+from incidents.models import knowledge
+from incidents.algo.initialization import Initialize
+ini = Initialize()
+df_knowledge = ini.load_input("incidents/algo/input/incident_knowledge.csv")
+df_knowledge = df_knowledge.drop('Incident ID', axis = 1)
+knw = knowledge()
+for index, row in df_knowledge.iterrows():
+	knw = knowledge()
+	knw.summary = row['summary']
+	knw.label = row['label']
+	knw.save()
+
+###################################################
+
+
+
+
+

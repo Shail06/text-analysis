@@ -1,9 +1,11 @@
+import cython
 import nltk, re
 from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import CountVectorizer
 from nltk.tokenize import RegexpTokenizer
 english_stops             = stopwords.words('english')
 english_stops.remove('not')
+
 
 
 def tokenize(raw_text):

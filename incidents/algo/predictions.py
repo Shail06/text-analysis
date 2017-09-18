@@ -9,7 +9,7 @@ from .initialization import Initialize
 import nltk
 import json
 from pandas import ExcelWriter
-
+import cython
 
 class Learner:
     classifier = None
@@ -56,7 +56,7 @@ class Learner:
         return df_output
 
     def save_output(self, df_output, filename):
-        writer = pd.ExcelWriter('output/' + filename,  engine='xlsxwriter')
+        writer = pd.ExcelWriter(filename,  engine='xlsxwriter')
         df_output.to_excel(writer, 'Sheet1')
         writer.save()
 

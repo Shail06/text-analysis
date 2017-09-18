@@ -1,6 +1,6 @@
 from incidents.algo.predictions import Learner
 from incidents.algo.initialization import Initialize
-
+import cython
 
 class ExecuteScenario():
 
