@@ -1,11 +1,19 @@
+
 <form class="form-group" action="{% url 'index' %}" enctype="multipart/form-data" method="post">
 				{% csrf_token %}
-			   
-					<p>Incident File: <input class="form-control-file" id='id_docfile' name="docfile" required="" type="file" accept=".xls,.xlsx"/></p>
-					<p>
-						<input class="btn btn-primary" type="submit"  value="Upload" name="upload">
-						{% if upload_success %}
-							<p>{{ upload_success }} uploaded successfully!</p>
-						{% endif %}
-					</p>
-				</form>
+
+	<div class="form-group">
+	        <input id="id_docfile" name="docfile" style="position: absolute; clip: rect(0px, 0px, 0px, 0px);" tabindex="-1" type="file" accept=".xls,.xlsx" required="" >
+	        <div class="bootstrap-filestyle input-group"><input class="form-control " placeholder="" disabled="" type="text">
+	        <span class="group-span-filestyle input-group-btn" tabindex="0"><label for="id_docfile" class="btn btn-info ">
+	        <span class="icon-span-filestyle glyphicon glyphicon-folder-open"></span> <span class="buttonText"> Choose Incident file </span></label></span>
+			</div>
+    </div>
+			<p><input class="btn btn-primary" type="submit"  value="Upload" name="upload">
+			{% if upload_success %}
+			<div class="alert alert-success alert-dismissable fade in">
+			<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+			<strong>Success!</strong> <span style="font-family: 'Courier New', 'sans-serif';">{{ upload_success }}</span> uploaded.</div>
+			</p>
+			{% endif %}
+</form>

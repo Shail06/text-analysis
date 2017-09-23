@@ -65,14 +65,15 @@ def extract_names(document):
 	for tagged_sentence in sentences:
 		for chunk in nltk.ne_chunk(tagged_sentence):
 			if type(chunk) == nltk.tree.Tree:
-				names.extend([c[0] for c in chunk])
+				if chunk.label() == 'LOCATION' or chunk.label() == 'ORGANIZATION' or chunk.label() == 'DATE' or chunk.label() == 'FACILITY' or chunk.label() == 'TIME':
+					names.extend([c[0] for c in chunk])
 	return names
 
 def stanfordNER(raw_text):
 	name_stops   = []
 	tagged_text  = stanf_tagger.tag(nltk.word_tokenize(raw_text)) #st.tag(raw_text.split())
 	for term, tag in tagged_text:
-		if(tag == 'LOCATION' or tag == 'ORGANIZATION' or tag == 'PERSON'):
+		if(tag == 'LOCATION' or tag == 'ORGANIZATION' or tag == 'GPE' or tag == 'DATE' or tag == 'FACILITY' or tag == 'TIME'):
 			name_stops.append(term)
 	return name_stops
 

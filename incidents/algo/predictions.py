@@ -32,7 +32,7 @@ class Learner:
     def construct_dtm(self, df_clean):
         incident_desc = df_clean['summary']
         vectorizer = CountVectorizer(
-            min_df=1, tokenizer=self.lemmatization, ngram_range=(1, 2))
+            min_df=2, tokenizer=self.lemmatization, ngram_range=(1, 2))
         tf_dtm = vectorizer.fit_transform(incident_desc)
         self.vectorizer = vectorizer
         return tf_dtm
@@ -49,10 +49,10 @@ class Learner:
     def predict_labels(self, df_input_clean):
         nb_clf = self.classifier
         vect = self.vectorizer
-        dtm_input = vect.transform(df_input_clean['summary'])
+        dtm_input = vect.transform(df_input_clean['machine_summary'])
         predictions = nb_clf.predict(dtm_input)
         df_output = df_input_clean
-        df_output['Predicted Label'] = predictions
+        df_output['Machine_Predicted_Label'] = predictions
         return df_output
 
     def save_output(self, df_output, filename):
@@ -75,17 +75,17 @@ class Learner:
         return sorted_pred_list
 
     def get_prediction_stats(self, df_output, incident_id):
-        all_stats = df_output.groupby('Predicted Label').count()
+        all_stats = df_output.groupby('Machine_Predicted_Label').count()
         count_stats = all_stats[incident_id]
         return count_stats
 
     def get_predictions_probs_all(self, df_input_clean):
         nb_clf = self.classifier
         vect = self.vectorizer
-        doc = list(df_input_clean['summary'])
+        doc = list(df_input_clean['machine_summary'])
         doc_tf = vect.transform(doc)
         predictions = nb_clf.predict(doc_tf)
-        df_input_clean['Predicted Label'] = predictions
+        df_input_clean['Machine_Predicted_Label'] = predictions
         predicted_probs = nb_clf.predict_proba(doc_tf)
         predicted_probs = [[round(float(i) * 100, 4) for i in nested_list]
                            for nested_list in predicted_probs]
@@ -96,7 +96,7 @@ class Learner:
             sorted_pred_list = sorted(entry, key=lambda t: t[1], reverse=True)
             prediction_list.append(json.dumps(sorted_pred_list))
 
-        df_input_clean['Predictions Detail'] = prediction_list
+        df_input_clean['Machine_Predictions_Detail'] = prediction_list
 
         return df_input_clean
 
@@ -108,8 +108,8 @@ class Learner:
     def fetch_next_row(self, rows_iterator, incid_col):
         next_row = next(rows_iterator)
         incid_column = next_row[1][incid_col]
-        description = next_row[1]['combined_desc']
-        summary = next_row[1]['summary']
+        description = next_row[1]['machine_combined_desc']
+        summary = next_row[1]['machine_summary']
         pred_prob_list = self.get_predictions_probs(summary)
         return [incid_column, description, summary, pred_prob_list], rows_iterator
 

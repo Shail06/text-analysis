@@ -1,6 +1,8 @@
-<div class="col-lg-6" id="single_incident">
+<div class="col-lg-7" id="single_incident">
 
 	<script type='text/javascript'>
+		
+
 		$(function(){
 
 			$(".accept").click(function( event ) {
@@ -34,17 +36,20 @@
 			
 	</script>
 	{% if output_detail %}
-		<!--<form class="form-group" action="{% url 'index' %}" method="POST">-->
 		{% csrf_token %}
 		<p><b>Incident ID: </b><span style=" font-family: 'Courier New', 'sans-serif';">{{ output_detail.0.0 }}</font></p>
 		<p><b>Description: </b>
 			<div style="overflow-y: auto; overflow-x: hidden;  font-family: 'Courier New', 'sans-serif'; font-size: 14px; height: 150px; padding-left: 5px; padding-top: 5px; background-color: WhiteSmoke; " >
 				{% autoescape on %}
 				{{ output_detail.0.1 | linebreaksbr }}
-			{% endautoescape %}
-		</div>
-	</p>
+				{% endautoescape %}
+			</div>
+		</p>
+
+
 	<p><b>Summary: </b><div><textarea id="summary" name="incident_summary" style="overflow-y: auto; overflow-x: hidden;  font-family: 'Courier New', 'sans-serif'; font-size: 14px; height: 80px; resize: none; width: 100%"  contenteditable >{{ output_detail.0.2 }}</textarea></div></p>
+
+
 	<p><b>Predictions: </b></p>
 
 	<table width="100%">
@@ -59,8 +64,8 @@
 					<label name="probability" style=" font-family: 'Courier New', 'sans-serif'; font-size:14px">{{ prob }}%</label>
 				</td>
 				<td>
-					<input class="btn btn-default accept" type="submit" name="accept" value="Accept"  id="accept" />
-					<!--<input class="btn btn-default" type="submit" name="accept" value="Accept"  id="accept_{{ forloop.counter }}" />-->
+					<button class="btn btn-default btn-sm accept" type="submit" name="accept"  id="accept" >
+					<span class="glyphicon glyphicon-ok"></span>Accept</button>
 				</td>
 			</tr>
 			
@@ -72,20 +77,14 @@
 				{% if output_detail.has_previous %}
 					<li class="page-item" >
 						<a class="page-link" href="?page={{ output_detail.previous_page_number }}">
-							<!--<span aria-hidden="true"></span>
-							<span class="sr-only">Previous</span>-->
 							&laquo;&nbsp;Previous
 						</a>
 					</li>
 				{% endif %}
-				<!--<span class="current">-->
 				<li class="page-item active"><a class="page-link" href="#">Page {{ output_detail.number }} of {{ output_detail.paginator.num_pages }} </a></li>
-				<!--</span>-->
 				{% if output_detail.has_next %}
 					<li class="page-item">
 						<a class="page-link" href="?page={{ output_detail.next_page_number }} ">
-							<!--<span aria-hidden="true">&raquo;</span>
-							<span class="sr-only">Next</span>-->
 							Next&nbsp;&raquo;
 						</a>
 					</li>
@@ -93,6 +92,5 @@
 			</ul>
 		</div>
 	</span>
-	<!--</form>-->
 {% endif %}
 </div>

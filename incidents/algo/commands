@@ -57,5 +57,53 @@ for index, row in df_knowledge.iterrows():
 
 
 
+import time
+
+start = time.time()
+print("hello")
+end = time.time()
+print(end - start)
 
 
+
+
+
+
+import cython
+def f_plain(x):
+	return x * (x - 1)
+
+def integrate_f_plain(a, b, N):
+	s = 0
+	dx = (b - a) / N
+	for i in range(N):
+		s += f_plain(a + i * dx)
+	return s * dx
+
+import time
+import numpy as np
+import pandas as pd
+df = pd.DataFrame({'a': np.random.randn(1000), 'b': np.random.randn(1000),'N': np.random.randint(100, 1000, (1000)),'x': 'x'})
+start = time.time()
+df.apply(lambda x: integrate_f_plain(x['a'], x['b'], x['N']), axis=1)
+end= time.time()
+end -start
+
+
+import time
+from incidents.algo.execution import ExecuteScenario
+exec_scenario = ExecuteScenario()
+file = "uploads/RSLF_Incident_Analysis_RawData (copy)20170917-000340.xlsx"
+df_cols = exec_scenario.get_column_headers(file)
+#start = time.time()
+prun -l 4 exec_scenario.get_predicted_dataframe(['Short Text','Long Description'])
+#end= time.time()
+#end -start
+
+
+################# SQLITE-3 ####################
+from incidents.db_populate import PopulateDB
+db_obj = PopulateDB()
+res = db_obj.cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
+for name in res:
+	print(name[0])

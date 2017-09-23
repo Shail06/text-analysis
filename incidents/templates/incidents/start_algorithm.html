@@ -2,7 +2,7 @@
 				{% csrf_token %}
 					{% if all_columns %}
 						<p>
-							<span class="label label-info">Incident ID field: </span>
+							<label>Incident ID field: </label>
 							<select class="form-control" name="incident_id">
 							{% for col_name in all_columns %}
 								{% ifequal col_name incid_col %}
@@ -15,8 +15,8 @@
 							</select>
 						</p>
 						<p>
-							<span class="label label-info" >Description Columns: </span>
-							<select class="form-control" name="description" style="height: 20%;" required="" multiple>
+							<label>Description Columns: </label>
+							<select class="selectpicker show-tick form-control" name="description" required="" multiple>
 							{% for col_name in all_columns %}
 								{% if col_name in desc_cols %}
 									<option id="column{{ forloop.counter }}" selected="selected">{{ col_name }}</option>
@@ -27,7 +27,7 @@
 							</select>
 						</p>
 						<p>
-						<span>Perform Action:</span>
+						<label>Perform Action:</label>
 						<select class="form-control" name="perform_action">
 							{% if perform_action == "single" %}	
 							<option value="multiple"  >Classify whole document</option>

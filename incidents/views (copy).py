@@ -17,8 +17,8 @@ def index(request):
     message_upload = "uploaded successfully!"
     context = {'home_title': home_title}
     exec_scenario = ExecuteScenario()
-    db_object = PopulateDB()
-
+    db_object   = PopulateDB()
+    request.session.flush()
     #print("inside index")
     # import pdb;
     # pdb.set_trace();
@@ -29,7 +29,7 @@ def index(request):
             if(form.is_valid()):
                 upFile = request.FILES['docfile']
                 name, extension = os.path.splitext(upFile.name)
-                upFilename = name + time.strftime("%Y%m%d_%H%M%S") + extension
+                upFilename = name + time.strftime("%Y%m%d-%H%M%S") + extension
                 request.session["file_name"] = upFilename
                 fs = FileSystemStorage()
                 filename = fs.save('uploads/' + upFilename, upFile)
@@ -51,8 +51,6 @@ def index(request):
 
                 context['upload_success'] = upFile.name
                 request.session['upload_success'] = context['upload_success']
-                request.session["TABLE_NAME"] = "SessionTable_" + \
-                    time.strftime("%Y%m%d_%H%M%S")
                 df_cols = exec_scenario.get_column_headers(filename)
                 context['all_columns'] = df_cols
                 request.session['all_columns'] = df_cols
@@ -75,17 +73,14 @@ def index(request):
                 request.session["prev_files"][0])
             # import pdb;
             # pdb.set_trace()
-            db_table_name = request.session["TABLE_NAME"]
+            temp_file = "output/temp/" + request.session["file_name"]
 
-            if(not 'knowledge_altered' in request.session):
-                print("\n\n Knowledge CHANGE NOT EXIST \n\n")
+            if( not 'knowledge_altered' in request.session):
                 request.session["knowledge_altered"] = "no"
 
-            if(request.session["knowledge_altered"] == "no" and db_object.table_exists(db_table_name)):
-                print("\n\n Knowledge CHANGE = NO \n\n")
-                df_output = db_object.get_table_as_dataframe(db_table_name)
+            if(request.session["knowledge_altered"] == "no" and os.path.isfile(temp_file)):
+                df_output = exec_scenario.get_input_dataframe(temp_file)
             else:
-                print("\n\n Knowledge CHANGE = YES \n\n")
                 start_time = time.time()
                 df_output = exec_scenario.get_predicted_dataframe(desc_col)
                 end_time = time.time()
@@ -93,7 +88,7 @@ def index(request):
                 request.session["knowledge_altered"] = "no"
 
             df_output_single = df_output[
-                [incid_col, 'machine_combined_desc', 'machine_summary', 'Machine_Predictions_Detail']]
+                [incid_col, 'combined_desc', 'summary', 'Predictions Detail']]
             paginator = Paginator(df_output_single.values.tolist(), 1)
             page = request.GET.get('page')
             try:
@@ -112,15 +107,13 @@ def index(request):
             context["LABELS"] = c_stats.index.values.tolist()
             context["LABEL_COUNTS"] = c_stats.values.tolist()
             df_output_multiple = df_output.drop(
-                ['machine_combined_desc', 'machine_summary', 'Machine_Predictions_Detail'], axis=1)
+                ['combined_desc', 'summary', 'Predictions Detail'], axis=1)
 
             op_name = request.session["file_name"]
-            if(not db_object.table_exists(db_table_name)):
-                db_object.fill_table(df_output, db_table_name)
-
-            if(not os.path.isfile('output/' + op_name)):
-                exec_scenario.save_output(
-                    df_output_multiple, 'output/' + op_name)
+            #df_output['combined_desc'] = df_output.combined_desc.str.replace(r'\n', ' <br/> ')
+            #exec_scenario.save_output(df_output, 'output/temp/' + op_name)  ## CREATE A DATABASE TABLE AND SAVE THE DATAFRAME
+            db_object.fill_table(df_output, op_name)
+            exec_scenario.save_output(df_output_multiple, 'output/' + op_name)
             context["download_file"] = "output/" + op_name
             request.session["prev_files"].append("output/" + op_name)
             #request.session["prev_files"].append("output/temp/" + op_name)
@@ -136,10 +129,11 @@ def index(request):
         incid_col = request.session['incid_col']
         df_cols = exec_scenario.get_column_headers(request.session["prev_files"][
             0])  # Necessary step for next step
-        table_name = request.session["TABLE_NAME"]
-        df_output = db_object.get_table_as_dataframe(table_name)
+        file_name = request.session["file_name"]
+        df_output = exec_scenario.get_input_dataframe(
+            "output/temp/" + file_name)
         df_output_single = df_output[
-            [incid_col, 'machine_combined_desc', 'machine_summary', 'Machine_Predictions_Detail']]
+            [incid_col, 'combined_desc', 'summary', 'Predictions Detail']]
 
         paginator = Paginator(df_output_single.values.tolist(), 1)
         page = request.GET.get('page')
