@@ -116,3 +116,4 @@ class Learner:
     def enhance_knowledge(self, summary_text, pred_label):
         know_object = knowledge(summary=summary_text, label=pred_label)
         know_object.save()
+

@@ -49,6 +49,10 @@ def index(request):
                 if filename:
                     request.session["prev_files"].append(filename)
 
+                if 'TABLE_NAME' in request.session and db_object.table_exists(request.session['TABLE_NAME']):
+                    db_object.delete_table(request.session['TABLE_NAME'])
+
+
                 context['upload_success'] = upFile.name
                 request.session['upload_success'] = context['upload_success']
                 request.session["TABLE_NAME"] = "SessionTable_" + \
@@ -123,7 +127,6 @@ def index(request):
                     df_output_multiple, 'output/' + op_name)
             context["download_file"] = "output/" + op_name
             request.session["prev_files"].append("output/" + op_name)
-            #request.session["prev_files"].append("output/temp/" + op_name)
 
     elif('page' in request.GET):
         context['upload_success'] = request.session['upload_success']
