@@ -1,4 +1,51 @@
-<div class="col-lg-7" id="single_incident">
+
+<style>
+.flash-button{
+	background:red;
+	padding:5px 10px;
+	color:#fff;
+	border:none;
+	border-radius:5px;
+	
+	animation-name: flash;
+	animation-duration: 1s;
+	animation-timing-function: linear;
+	animation-iteration-count: infinite;
+
+	//Firefox 1+
+	-webkit-animation-name: flash;
+	-webkit-animation-duration: 1s;
+	-webkit-animation-timing-function: linear;
+	-webkit-animation-iteration-count: infinite;
+
+	//Safari 3-4
+	-moz-animation-name: flash;
+	-moz-animation-duration: 1s;
+	-moz-animation-timing-function: linear;
+	-moz-animation-iteration-count: infinite;
+}
+
+@keyframes flash {  
+    0% { opacity: 1.0; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1.0; }
+}
+
+//Firefox 1+
+@-webkit-keyframes flash {  
+    0% { opacity: 1.0; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1.0; }
+}
+
+//Safari 3-4
+@-moz-keyframes flash {  
+    0% { opacity: 1.0; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1.0; }
+}
+</style>
+
 
 	<script type='text/javascript'>
 		
@@ -6,31 +53,49 @@
 		$(function(){
 
 			$(".accept").click(function( event ) {
-		
-				var warn = confirm('Are you Sure?');
-				if(warn == true)
-				{
-					console.log("Yessss")
-					event.preventDefault();
-					var summary = $('#summary').val();
-					var label =  $(this).parent().prev().prev().find("input").val();
-					console.log(summary);
-					console.log(label);
-					$.ajax({
-						    url: "/incidents/ajax/",
-						    type: "POST",
-						    headers: {'X-CSRFToken': '{{ csrf_token }}'},
-						    data: { incident_summary : summary, predicted_label : label },
-						    dataType: 'json',
-						    success: function(data) {
-						      console.log(data);
-						    },
-						    error: function (textStatus, errorThrown) {
-				                console.log(textStatus);
-				                console.log(errorThrown);
-				            }
-						  });
-				}
+					var self_button = this;
+					var warn = swal({
+									  title: 'Are you sure?',
+									  text: "This can affect the future results!",
+									  type: 'warning',
+									  showCancelButton: true,
+									  confirmButtonColor: '#3085d6',
+									  cancelButtonColor: '#d33',
+									  confirmButtonText: 'Yes, accept the prediction!'
+									}).then(function () {
+										 swal(
+										    'Accepted!',
+										    'It is recommended to perform the classifcation again.',
+										    'success'
+										  ).then(function () {
+
+														//event.preventDefault();
+														event.originalEvent.defaultPrevented;
+														console.log("YIPPPPYYYY..!\n\n")
+														var summary = $('#summary').val();
+														var label =  $(self_button).parent().prev().prev().find("input").val();
+														console.log(summary);
+														console.log(label);
+														$.ajax({
+															    url: "/incidents/ajax/",
+															    type: "POST",
+															    headers: {'X-CSRFToken': '{{ csrf_token }}'},
+															    data: { incident_summary : summary, predicted_label : label },
+															    dataType: 'json',
+															    success: function(data) {
+															      console.log(data);
+															    },
+															    error: function (textStatus, errorThrown) {
+													                console.log(textStatus);
+													                console.log(errorThrown);
+													            }
+															  });
+
+														var start_button = document.getElementById("start_button");
+														start_button.setAttribute("class", "btn flash-button");
+														start_button.setAttribute("value", "Re-Classify");
+													});
+						});
 			});
 		});
 			
@@ -47,7 +112,7 @@
 		</p>
 
 
-	<p><b>Summary: </b><div><textarea id="summary" name="incident_summary" style="overflow-y: auto; overflow-x: hidden;  font-family: 'Courier New', 'sans-serif'; font-size: 14px; height: 80px; resize: none; width: 100%"  contenteditable >{{ output_detail.0.2 }}</textarea></div></p>
+	<p><b>Summary: </b><div><textarea id="summary" name="incident_summary" style="overflow-y: auto; overflow-x: hidden;  font-family: 'Trebuchet MS', 'sans-serif'; font-size: 14px; height: 60px; resize: none; width: 100%"  contenteditable >{{ output_detail.0.2 }}</textarea></div></p>
 
 
 	<p><b>Predictions: </b></p>
@@ -57,11 +122,11 @@
 			
 			<tr>
 				<td width="60%">
-					<span style=" font-family: 'Courier New', 'sans-serif'; font-size:14px" >{{ label }}</span>
+					<span style=" font-family: 'Trebuchet MS', 'sans-serif'; font-size:14px" >{{ label }}</span>
 					<input type="hidden" class="{{label}}" name="predicted_label" value="{{ label }}" />
 				</td>
 				<td width="100%">
-					<span name="probability" style=" font-family: 'Courier New', 'sans-serif'; font-size:14px">{{ prob }}%</span>
+					<span name="probability" style=" font-family: 'Trebuchet MS', 'sans-serif'; font-size:14px">{{ prob }}%</span>
 				</td>
 				<td>
 					<button class="btn btn-default btn-sm accept" type="submit" name="accept"  id="accept" style=" font-family: 'Courier New', 'sans-serif'; font-size:14px" >
@@ -72,8 +137,8 @@
 		{% endfor %}
 	</table>
 	<span class="step-links">
-		<div>
-			<ul class="pagination justify-content-center">
+		<div align="center">
+			<ul class="pagination">
 				{% if output_detail.has_previous %}
 					<li class="page-item" >
 						<a class="page-link" href="?page={{ output_detail.previous_page_number }}">
@@ -93,4 +158,3 @@
 		</div>
 	</span>
 {% endif %}
-</div>

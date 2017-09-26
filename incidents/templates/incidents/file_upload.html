@@ -3,13 +3,16 @@
 				{% csrf_token %}
 
 	<div class="form-group">
-	        <input id="id_docfile" name="docfile" style="position: absolute; clip: rect(0px, 0px, 0px, 0px);" tabindex="-1" type="file" accept=".xls,.xlsx" required="" >
-	        <div class="bootstrap-filestyle input-group"><input class="form-control " placeholder="" disabled="" type="text">
-	        <span class="group-span-filestyle input-group-btn" tabindex="0"><label for="id_docfile" class="btn btn-info ">
+	<!--
+	        <input id="id_docfile" name="docfile" style="position: absolute; clip: rect(0px, 0px, 0px, 0px);" tabindex="-1" type="file" accept=".xlsx" required="" >
+	        <div class="bootstrap-filestyle input-group"><input class="form-control " placeholder="Select file for upload..." disabled="" type="text">
+	        <span class="group-span-filestyle input-group-btn" tabindex="0"><label for="id_docfile" class="btn btn-primary ">
 	        <span class="icon-span-filestyle glyphicon glyphicon-folder-open"></span> <span class="buttonText"> Choose Incident file </span></label></span>
-			</div>
+	  -->
+
+	  		<input id="id_docfile" name="docfile" style="position: absolute; clip: rect(0px, 0px, 0px, 0px);" tabindex="-1" type="file" accept=".xlsx" required="" type="file" class="filestyle" data-buttonBefore="true" data-btnClass="btn-primary" data-placeholder="Select file for upload..." />
     </div>
-			<p><input class="btn btn-primary" type="submit"  value="Upload" name="upload">
+			<p><input class="btn btn-info" type="submit"  value="Upload" name="upload">
 			{% if upload_success %}
 			<div class="alert alert-success alert-dismissable fade in">
 			<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>

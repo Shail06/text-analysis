@@ -94,7 +94,7 @@ def index(request):
                 df_output = exec_scenario.get_predicted_dataframe(desc_col)
                 end_time = time.time()
                 print(end_time - start_time)
-                request.session["knowledge_altered"] = "no"
+                #request.session["knowledge_altered"] = "no"
 
             df_output_single = df_output[
                 [incid_col, 'machine_combined_desc', 'machine_summary', 'Machine_Predictions_Detail']]
@@ -119,8 +119,9 @@ def index(request):
                 ['machine_combined_desc', 'machine_summary', 'Machine_Predictions_Detail'], axis=1)
 
             op_name = request.session["file_name"]
-            if(not db_object.table_exists(db_table_name)):
+            if(not db_object.table_exists(db_table_name) or request.session["knowledge_altered"] == "yes"):
                 db_object.fill_table(df_output, db_table_name)
+                request.session["knowledge_altered"] = "no"
 
             if(not os.path.isfile('output/' + op_name)):
                 exec_scenario.save_output(

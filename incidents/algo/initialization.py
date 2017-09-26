@@ -13,6 +13,7 @@ class Initialize:
         # pd.read_csv(filename,  sep = ',', encoding = 'ISO-8859-1')
         excel_file = pd.ExcelFile(filename)
         df_input_raw = excel_file.parse(excel_file.sheet_names[0])
+        df_input_raw = df_input_raw.fillna(0)
         return df_input_raw
 
     # From the column names selected by user, generate a clean input Data frame

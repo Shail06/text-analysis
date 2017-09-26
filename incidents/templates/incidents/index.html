@@ -1,13 +1,19 @@
 <head>
 	<title>SAP - Incident Analysis</title>
- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+ 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.0/Chart.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.0/Chart.bundle.min.js"></script>
-	<script type="text/javascript" src="js/bootstrap-filestyle.min.js"> </script>
+
+
+	{% load staticfiles %}
+	<script type="text/javascript" src="{% static 'incidents/bootstrap-filestyle.min.js' %}"> </script>
+
+	<script src="{% static 'incidents/sweetalert2.min.js' %}"></script>
+	<link rel="stylesheet" href="{% static 'incidents/sweetalert2.min.css' %}">
 
 </head>
 <body class="container">
@@ -20,13 +26,13 @@
 			{% include "incidents/file_upload.html" %}
 			{% include "incidents/start_algorithm.html" %}
 		</div>
-		
+		<div class="col-lg-7" id="single_incident">
 		{% if perform_action == "single"  %}
 			{% include "incidents/training.html" %}
 		{% elif perform_action == "multiple" %}
 			{% include "incidents/chart.html" %}
 		{% endif %}
-		
+		</div>
 	</div>
 
 </body>
