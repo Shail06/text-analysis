@@ -46,7 +46,6 @@
 }
 </style>
 
-
 	<script type='text/javascript'>
 		
 
@@ -146,6 +145,25 @@
 						</a>
 					</li>
 				{% endif %}
+
+<!--
+				{% for i in output_detail.paginator.page_range %}
+					{% if  forloop.counter < output_detail.number|add:"3" and forloop.counter > output_detail.number|add:"-3" %}
+	      				{% if output_detail.number == i %}
+	        				<li class="page-item active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+	      				{% else %}
+	        				<li><a href="?page={{ i }}">{{ i }}</a></li>
+	      				{% endif %}
+	    			{% endif %}
+	    		{% endfor %}
+    			{% if output_detail.has_next %}
+      				<li><a href="?page={{ output_detail.next_page_number }}">&raquo;</a></li>
+    			{% else %}
+      				<li class="disabled"><span>&raquo;</span></li>
+    			{% endif %}
+
+-->
+
 				<li class="page-item active"><a class="page-link" href="#">Page {{ output_detail.number }} of {{ output_detail.paginator.num_pages }} </a></li>
 				{% if output_detail.has_next %}
 					<li class="page-item">
@@ -154,6 +172,7 @@
 						</a>
 					</li>
 				{% endif %}
+
 			</ul>
 		</div>
 	</span>
