@@ -6,6 +6,8 @@ Installing the Project
     import nltk
     nlkt.download()
     // Download the following packages: stopwords, wordnet, punkt,  maxent_ne_chunker, averaged_perceptron_tagger, words
+    d stopwords wordnet punkt  maxent_ne_chunker averaged_perceptron_tagger words
+    
 4) Move out of python promt and run the project as:
     python manage.py runserver
     
