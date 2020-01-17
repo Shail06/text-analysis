@@ -1,5 +1,5 @@
 Cython==0.28.5
-Django==2.2.7
+Django>=2.2.9
 django-extensions==1.9.0
 nltk>=3.4.5
 numpy==1.17.4
